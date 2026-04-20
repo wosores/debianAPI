@@ -1,0 +1,10 @@
+global:
+  # Opcional: Configurar credenciais SMTP para envio de e-mail
+
+route:
+  receiver: 'default-receiver' # Envia todos os alertas para o receiver padrão
+
+receivers:
+  - name: 'default-receiver'
+    # Configurar um webhook ou e-mail aqui (ex: Slack, Gmail)
+    # Por enquanto, apenas um placeholder para garantir que o serviço inicie.

@@ -1,0 +1,23 @@
+global:
+  scrape_interval: 15s
+
+# 1. Configuração do Alertmanager
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['localhost:9093'] # 'alertmanager' é o nome do serviço no docker-compose
+
+scrape_configs:
+  # 2. Monitora o próprio Prometheus
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['192.168.100.105:9090']
+
+  # 3. Monitora os serviços da stack (Zipkin e Grafana)
+  - job_name: 'services'
+    static_configs:
+      - targets: ['192.168.100.105:9411', '192.168.100.105:3000']
+
+  - job_name: 'node_exporter' # Novo job para o Node Exporter
+    static_configs:
+      - targets: ['node-exporter:9100'] # Usa o nome do serviço e a porta 9100
