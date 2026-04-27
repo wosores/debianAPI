@@ -1,0 +1,29 @@
+import flask
+import pymongo
+
+def client():
+    return pymongo.MongoClient()
+
+def collection(collection):
+    db = client()
+    return db.collection
+
+def list_users(collection):
+    return collection.find()
+
+app = flask.Flask(__name__)
+
+@app.route('/users', methods = ['GET'])
+def get_users():
+    user_col = collection(users)
+
+    users = [
+            {
+                'id' : u.get('_id'),
+                'username':  u.get('username')
+                } for u in list_users(user_col)
+            ]
+    return flask.jsonify(users)
+
+if __name__ == '__main__':
+app.run(host='0.0.0.0', debug=True)

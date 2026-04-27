@@ -1,0 +1,75 @@
+import flask
+import pymongo
+
+# Função para conectar ao MongoDB
+def get_client():
+    # Adicione a URL de conexão padrão
+    return pymongo.MongoClient("mongodb://localhost:27017/")
+
+def get_collection(col_name):
+    client = get_client()
+    # Aqui definimos o nome do banco (ex: 'meu_banco') e a coleção
+    db = client['test'] 
+    return db[col_name]
+
+def list_users(col):
+    return col.find()
+
+app = flask.Flask(__name__)
+
+@app.route('/users', methods=['GET'])
+def get_users():
+    # Buscamos a coleção 'users'
+    user_col = get_collection('users')
+
+    # Geramos a lista a partir do que vem do banco
+    users_list = [
+        {
+            'id': str(u.get('_id')), # Convertemos o ID para string para evitar erro no JSON
+            'username': u.get('username')
+        } for u in list_users(user_col)
+    ]
+    return flask.jsonify(users_list)
+
+if __name__ == '__main__':
+    # ESTA LINHA PRECISA DE 4 ESPAÇOS DE RECUO (IDENTAÇÃO)
+    app.run(host='0.0.0.0', debug=True)
+
+def add_user(collection, user):
+    collection.insert_one(user)
+    return collection.find(user)
+
+@app.route('/users/add', methods = [ 'POST'] )
+def add_user():
+    user = flask.requests.form
+    users_collection = collection(users)
+    return flask.jsonify(add_user(users_collection, user)
+
+def delete_user(collection, user_id):
+                         user = collection.find({'_id': user_id}
+                                                if user is not None:
+                                                collection.delete_one(user)
+                                                return user
+                                                return {'mensagem': 'usuário não encontrado'}
+
+@app.route('/users/remove/<id>', methods = ['DELETE'])
+def delete_user_by_id(id):
+                                                users_collection = collection('users')
+result = delete_user(users_collection, id)
+return flask.jsonify(result)
+                                                def update_user(collection, user_id, updated_user):
+user = collection.find({'_id': user_id}
+if user is not None:
+collection.update_one(user, updated_user)
+return collection.find(user)
+else:
+return {'mensagem':'usuário não encontrado'}
+
+                       @app.route('/users/update/<id>', methods = ['PUT'])
+def update_user_by_id(id):
+user_collection = collection('users')
+updated_user = flask.request.form
+result = update_user(user_collection, id, updated_user)
+return flask.jsonify(result)
+
+
